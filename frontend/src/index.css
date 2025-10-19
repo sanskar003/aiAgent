@@ -1,0 +1,143 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+@tailwind utilities;
+
+
+/* Amiamie Light Italic */
+@font-face {
+  font-family: "Amiamie-light-italic";
+   src: url("/fonts/Amiamie-LightItalic.ttf") format("truetype");
+  font-weight: 100;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* Amiamie Black */
+@font-face {
+  font-family: "Amiamie-black";
+   src: url("/fonts/Amiamie-Black.ttf") format("truetype");
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Amiamie Black Italic */
+@font-face {
+  font-family: "Amiamie-black-italic";
+   src: url("/fonts/Amiamie-BlackItalic.ttf") format("truetype");
+  font-weight: 900;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* Amiamie-Round Variants (if needed separately) */
+@font-face {
+  font-family: "Amiamie-Round";
+   src: url("/fonts/Amiamie-RegularRound.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@theme {
+  --font-amiamie: "Amiamie", sans-serif;
+  --font-amiamie-black: "Amiamie-black", sans-serif;
+  --font-amiamie-round: "Amiamie-Round", sans-serif;
+  --font-amiamie-light-italic: "Amiamie-light-italic", sans-serif;
+  --font-amiamie-black-italic: "Amiamie-black-italic", sans-serif;
+}
+
+@layer base {
+  .prose strong {
+    color: whitesmoke !important;
+    font-family: var(--font-amiamie-light-italic);
+    font-weight: 300;
+  }
+}
+
+@layer base {
+  .prose h3, .prose h2 {
+    color: white !important;
+    font-family: var(--font-amiamie-round);
+    font-weight: 400;
+  }
+}
+
+@layer base {
+  .prose h4 {
+    color: plum !important;
+    font-family: var(--font-amiamie-light-italic);
+    font-weight: 400;
+  }
+}
+
+@layer base {
+  .prose h1 {
+    color: whitesmoke !important;
+    font-family: var(--font-amiamie-round);
+    font-weight: 200;
+  }
+}
+
+@layer base {
+  .prose th {
+    color: white !important;
+    font-family: var(--font-amiamie);
+  }
+}
+
+@layer base {
+  .prose h3 {
+    color: gainsboro !important;
+    font-family: var(--font-amiamie-light-italic);
+  }
+}
+
+@layer base {
+  /* Custom font styles for prose */
+  .prose {
+    @apply font-amiamie-round text-white;
+  }
+
+  .prose td, .prose th , .prose tr , .prose table , .prose ul, .prose ol {
+    @apply text-stone-400;
+  }
+
+  .prose p {
+    @apply text-stone-300 text-[15px] leading-relaxed;
+  }
+
+  .prose code {
+    @apply font-mono bg-red-300 px-1 py-0.5 rounded text-pink-400;
+  }
+
+  .prose a {
+    @apply text-orange-400 underline hover:text-orange-300;
+  }
+}
+
+body {
+    background-color: black;
+}
+
+::selection {
+  background-color: white;
+  color: red; /* amber-400 */
+}
+
+/* Scrollbar container */
+::-webkit-scrollbar {
+  height: 4px;
+  width: 4px;
+}
+
+/* Scrollbar thumb */
+::-webkit-scrollbar-thumb {
+  background-color: #f43f5e; /* Tailwind's red-500 */
+  border-radius: 9999px;
+}
+
+/* Optional: scrollbar track */
+::-webkit-scrollbar-track {
+  background-color: transparent;
+}
