@@ -7,9 +7,9 @@ export default function Logout() {
   const dispatch = useDispatch();
 
   function handleLogout() {
-    dispatch(clearAuth());           // ✅ reset Redux auth
-    localStorage.removeItem("auth"); // ✅ clear persisted login
-    dispatch(clearMessages());       // ✅ clear chat history
+    dispatch(clearAuth()); // ✅ reset Redux auth
+    localStorage.clear(); // ✅ clear all persisted data
+    dispatch(clearMessages()); // ✅ clear chat history
   }
 
   return (

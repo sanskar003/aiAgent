@@ -10,28 +10,44 @@ export default function Register() {
   const navigate = useNavigate();
 
   const RegisterSchema = Yup.object().shape({
-    name: Yup.string().min(2, "Too short").required("Required"),
-    email: Yup.string().email("Invalid email").required("Required"),
-    password: Yup.string().min(6, "Too short").required("Required"),
+    name: Yup.string().min(2, "Too short").required("Name is required"),
+    email: Yup.string().email("Invalid email").required("Email is required"),
+    password: Yup.string().min(6, "Too short").required("Password is required"),
   });
 
   async function handleRegister(values, actions) {
     try {
-      const { token, threadID, user } = await register(values.name, values.email, values.password);
-      dispatch(setAuth({ token, threadID, user }));
-      localStorage.setItem("auth", JSON.stringify({ token, threadID, user }));
+      localStorage.clear();
+      localStorage.removeItem("activeThreadId");
+
+      const { token, user } = await register(values.name, values.email, values.password);
+      dispatch(setAuth({ token, user }));
+      localStorage.setItem("auth", JSON.stringify({ token, user }));
       navigate("/");
     } catch (err) {
       console.error("Registration failed:", err);
       actions.setSubmitting(false);
-      actions.setFieldError("email", "Could not register. Try again.");
+
+      const msg = err.message?.toLowerCase() || "";
+      let errorText = "Registration failed. Please try again.";
+
+      if (msg.includes("already") || msg.includes("exists")) {
+        errorText = "An account with this email already exists.";
+      } else if (msg.includes("invalid")) {
+        errorText = "Please enter valid details.";
+      } else if (msg.includes("network")) {
+        errorText = "Unable to connect. Check your internet connection.";
+      }
+
+      actions.setFieldError("email", errorText);
+      actions.setStatus(errorText);
     }
   }
 
   return (
-    <div className="flex items-center justify-center h-screen bg-zinc-900 font-amiamie-round">
-      <div className="w-[24rem] p-6 rounded-xl">
-        <h2 className="text-4xl backdrop-blur-md py-4 rounded-full font-semibold text-white text-center mb-10 font-amiamie">
+    <div className="flex items-center justify-center h-screen bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900 font-amiamie-round p-3 sm:p-3 md:p-0 lg:p-0">
+      <div className="w-[24rem] px-8 py-10 rounded-2xl backdrop-blur-xl bg-white/5 border border-zinc-700 shadow-red-500 shadow-lg/20">
+        <h2 className="text-4xl text-white text-center font-semibold mb-6 font-amiamie">
           Register
         </h2>
 
@@ -40,14 +56,20 @@ export default function Register() {
           validationSchema={RegisterSchema}
           onSubmit={handleRegister}
         >
-          {({ isSubmitting }) => (
-            <Form className="flex flex-col gap-4">
+          {({ isSubmitting, status }) => (
+            <Form className="flex flex-col gap-5">
+              {status && (
+                <div className="text-red-400 text-center text-sm -mt-2">
+                  {status}
+                </div>
+              )}
+
               <div>
                 <Field
                   name="name"
                   type="text"
                   placeholder="Name"
-                  className="w-full px-4 py-2.5 text-xl rounded-3xl bg-red-200/30 text-red-50 placeholder-white focus:outline-none focus:ring-2 focus:ring-red-400 transition"
+                  className="w-full px-4 py-2.5 text-lg rounded-xl bg-white/10 text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-red-400 transition"
                 />
                 <ErrorMessage name="name" component="div" className="text-red-400 text-sm mt-1" />
               </div>
@@ -57,7 +79,7 @@ export default function Register() {
                   name="email"
                   type="email"
                   placeholder="Email"
-                  className="w-full px-4 py-2.5 text-xl rounded-3xl bg-red-200/30 text-red-50 placeholder-white focus:outline-none focus:ring-2 focus:ring-red-400 transition"
+                  className="w-full px-4 py-2.5 text-lg rounded-xl bg-white/10 text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-red-400 transition"
                 />
                 <ErrorMessage name="email" component="div" className="text-red-400 text-sm mt-1" />
               </div>
@@ -67,7 +89,7 @@ export default function Register() {
                   name="password"
                   type="password"
                   placeholder="Password"
-                  className="w-full px-4 py-2.5 text-xl rounded-3xl bg-red-200/30 text-red-50 placeholder-white focus:outline-none focus:ring-2 focus:ring-red-400 transition"
+                  className="w-full px-4 py-2.5 text-lg rounded-xl bg-white/10 text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-red-400 transition"
                 />
                 <ErrorMessage name="password" component="div" className="text-red-400 text-sm mt-1" />
               </div>
@@ -75,15 +97,15 @@ export default function Register() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-fit px-4 m-auto py-2 mt-10 rounded-full border-blue-500 border hover:bg-blue-600 text-white font-semibold transition-all duration-300 shadow-md"
+                className="w-full py-2 mt-4 rounded-xl  border border-red-400 hover:bg-red-400 transition-all duration-300 hover:text-black text-white font-semibold  shadow-md"
               >
-                {isSubmitting ? "..." : "Register"}
+                {isSubmitting ? "Registering..." : "Register"}
               </button>
             </Form>
           )}
         </Formik>
 
-        <p className="text-lg text-center text-zinc-400 mt-10">
+        <p className="text-md text-center text-zinc-400 mt-8">
           Already have an account?{" "}
           <Link to="/login" className="text-red-300 hover:text-blue-500">
             Sign in

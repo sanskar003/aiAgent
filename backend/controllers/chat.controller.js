@@ -1,24 +1,32 @@
 import Message from "../models/message.model.js";
 import User from "../models/users.model.js";
+import Thread from "../models/thread.model.js"; // ✅ make sure this is imported
 import { graphApp } from "../langgraph/agent.js";
 import { AIMessage, HumanMessage } from "@langchain/core/messages";
+import { checkpoints } from "../langgraph/agent.js";
 
 export async function handleChat(req, res) {
   try {
-    const { messages } = req.body;
+    const { messages, threadID } = req.body;
     console.log("📩 Incoming request body:", messages);
     console.log("🔑 req.userId:", req.userId);
+    console.log("🧵 Using threadID:", threadID);
+
+    if (!threadID) {
+      return res.status(400).json({ error: "Missing threadID in request body" });
+    }
 
     const user = await User.findById(req.userId);
     if (!user) return res.status(404).json({ error: "User not found" });
 
-    const threadID = user.threadID;
-    console.log("🧵 Using threadID:", threadID);
+    const thread = await Thread.findOne({ _id: threadID, userId: req.userId });
+    if (!thread) return res.status(403).json({ error: "Invalid thread access" });
 
-    // Format messages correctly for LangChain
+    const existingMemory = thread.memory || {};
+
+    // Format messages for LangChain
     const MAX_HISTORY = 5;
     const MAX_CHARS = 2000;
-
     const trimmed = messages.slice(-MAX_HISTORY);
 
     const langchainMessages = trimmed.map((m) => {
@@ -28,7 +36,6 @@ export async function handleChat(req, res) {
         : new AIMessage({ content: safeText });
     });
 
-    // Invoke LangGraph agent with full history
     const finalState = await graphApp.invoke(
       { messages: langchainMessages },
       { configurable: { thread_id: threadID } }
@@ -37,12 +44,10 @@ export async function handleChat(req, res) {
     const aiMessage = finalState.messages.at(-1);
     console.log("🤖 AI raw response:", aiMessage);
 
-    // Format AI response if it's JSON with results[]
     let formattedText = aiMessage.content;
 
     try {
       const parsed = JSON.parse(aiMessage.content);
-
       if (parsed.results && Array.isArray(parsed.results)) {
         formattedText = parsed.results
           .map((r) => {
@@ -57,21 +62,14 @@ export async function handleChat(req, res) {
       console.warn("⚠️ Could not parse AI content as JSON:", err.message);
     }
 
-    // Save user message
-    await Message.create({
-      threadID,
-      sender: "user",
-      text: messages.at(-1).text,
-    });
+    await Message.create({ threadID, sender: "user", text: messages.at(-1).text });
+    await Message.create({ threadID, sender: "ai", text: formattedText });
 
-    // Save formatted AI response
-    await Message.create({
-      threadID,
-      sender: "ai",
-      text: formattedText,
-    });
+    //💾 Save updated memory back to thread
+    const updatedMemory = await checkpoints.get(threadID);
+    thread.memory = updatedMemory;
+    await thread.save();
 
-    // Send back only the new AI message
     res.json({ reply: formattedText });
   } catch (err) {
     console.error("Chat error:", err);

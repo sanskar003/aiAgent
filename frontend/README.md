@@ -1,12 +1,36 @@
-# React + Vite
+🧠 Synthra — Ambient AI Chat Interface
+A poetic, thread-based AI chat experience built with React, Redux, and GSAP. Synthra blends modular architecture with premium UI polish, glowing animations, and a conversational flow that feels alive.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+🚀 Tech Stack
+React — Component-driven architecture
+Redux Toolkit — Scalable state management for threads, messages, and auth
+GSAP — Smooth entrance animations and pulse effects
+Tailwind CSS — Utility-first styling with responsive design
+Custom Fonts — amiamie and amiamie-round for brand voice
+Node/Express or Next.js — Backend routing and thread persistence
+Vercel — Deployment platform
 
-Currently, two official plugins are available:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+✨ Features
+🧵 Multi-threaded chat with memory and pagination
+🪞 Glassmorphic panels with blurred gradients
+🌀 Animated AI pulse ring and ambient logo presence
+🧠 Dynamic input bar that expands with user input
+🎨 Brand-aligned visuals and poetic onboarding copy
+📱 Fully responsive across breakpoints
+🧩 Modular Redux slices and clean separation of concerns
+🚦 Typing detection and async flow handling
 
-## Expanding the ESLint configuration
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+📦 Setup
+git clone https://github.com/your-username/synthra.git
+cd synthra
+npm install
+npm run dev
+
+
+Make sure your backend API is running and configured in .env.
+
+
+✍️ Design Philosophy
+Synthra is more than a chatbot — it’s a conversational presence. Every animation, gradient, and phrase is crafted to evoke warmth, clarity, and intelligence. The thread-based architecture ensures continuity, while the ambient visuals invite users into a space that feels alive.
