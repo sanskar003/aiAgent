@@ -23,7 +23,7 @@ Vercel — Deployment platform
 
 
 📦 Setup
-git clone https://github.com/your-username/synthra.git
+git clone https://github.com/your-username/aiAgent.git
 cd synthra
 npm install
 npm run dev
