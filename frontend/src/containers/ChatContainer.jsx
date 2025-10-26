@@ -8,18 +8,19 @@ import {
 import { useEffect, useRef, useState } from "react";
 import ChatWindow from "../components/ChatWindow.jsx";
 import InputBar from "../components/InputBar.jsx";
-import Profile from "../components/Profile.jsx";
 
 export default function ChatContainer() {
   const dispatch = useDispatch();
-  const { token, threadID } = useSelector((state) => state.auth);
+  const { token } = useSelector((state) => state.auth);
+  const { activeThreadId } = useSelector((state) => state.threads);
   const messages = useSelector((state) => state.chat.messages);
+
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [justLoaded, setJustLoaded] = useState(false);
-  const [isOpenProfile, setIsOpenProfile] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const messagesRef = useRef(messages);
 
@@ -28,16 +29,40 @@ export default function ChatContainer() {
   }, [messages]);
 
   async function loadHistoryPage(pageNum) {
-    const history = await fetchHistory(token, threadID, pageNum, 30);
-    if (history.length < 20) setHasMore(false);
-    dispatch(prependMessages(history)); // ✅ older messages at top
+    if (!activeThreadId || !token) return;
+
+    try {
+      const history = await fetchHistory(token, activeThreadId, pageNum, 30);
+
+      // Defensive check: ensure history is an array
+      if (!Array.isArray(history)) {
+        console.warn("Invalid history response or unauthorized thread access");
+        setHasMore(false);
+        return;
+      }
+
+      if (history.length < 20) setHasMore(false);
+      dispatch(prependMessages(history));
+    } catch (err) {
+      console.error("Failed to load history page:", err);
+      setHasMore(false); // Prevent further attempts if fetch fails
+    }
   }
 
   useEffect(() => {
-    if (token && threadID) {
+    if (token && activeThreadId) {
+      setLoading(true);
       (async () => {
-        const latest = await fetchHistory(token, threadID, 1, 20); // ✅ latest 30
-        dispatch(setMessages(latest));
+        try {
+          const latest = await fetchHistory(token, activeThreadId, 1, 20);
+          console.log("Fetched messages:", latest); // ✅ log response
+          dispatch(setMessages(latest));
+          setPage(2);
+        } catch (err) {
+          console.error("Failed to fetch messages:", err);
+        } finally {
+          setLoading(false);
+        }
 
         requestAnimationFrame(() => {
           const container = document.querySelector("#chat-container");
@@ -49,56 +74,71 @@ export default function ChatContainer() {
           }
         });
       })();
-      setPage(2); // next page will be older messages
     }
-  }, [token, threadID]);
+  }, [token, activeThreadId, dispatch]);
+
+  if (!activeThreadId) {
+    return (
+      <div className="flex items-center justify-center h-full text-zinc-400">
+        Select or create a thread to start chatting
+      </div>
+    );
+  }
 
   async function handleSend() {
     const userMessage = { sender: "user", text: input };
     setInput("");
 
-    // ✅ append the new user message at the bottom
     dispatch(addMessages(userMessage));
-
     setIsTyping(true);
 
-    const response = await sendChatMessage(token, [
-      ...messagesRef.current,
-      userMessage,
-    ]);
+    try {
+      const response = await sendChatMessage(
+        token,
+        [...messagesRef.current, userMessage],
+        activeThreadId
+      );
 
-    requestAnimationFrame(() => {
-      // ✅ append the AI reply at the bottom
-      dispatch(addMessages({ sender: "ai", text: response.reply }));
+      requestAnimationFrame(() => {
+        dispatch(addMessages({ sender: "ai", text: response.reply }));
+        setIsTyping(false);
+      });
+    } catch (err) {
+      console.error("Failed to send message:", err);
       setIsTyping(false);
-    });
+    }
   }
 
   return (
-    <div className="relative h-screen w-full flex flex-col items-center justify-start">
-      <div className="absolute top-10 right-10">
+    <div className="relative h-screen w-full flex flex-col items-center justify-center">
+     <div className="w-full max-w-3xl h-full flex flex-col items-center px-4 sm:px-6 md:px-8">
+  <div
+    id="chat-container" // ✅ Needed for scroll-to-bottom
+    className="w-full h-[calc(100vh-160px)] mt-5 rounded-xl bg-white/10 backdrop-blur-2xl border border-zinc-700 shadow-md"
+  >
+    {loading ? (
+      <div className="flex items-center justify-center h-full">
         <img
-          onClick={() => setIsOpenProfile(true)}
-          className="w-8 h-8 border border-red-600 rounded-full p-1 hover:bg-red-500 cursor-pointer transition-all duration-300"
-          src="/images/Sidebar-userIcon.png"
-          alt="profile"
+          className="w-20 h-20 sm:w-24 sm:h-24 md:w-30 md:h-30"
+          src="/images/loadingMessage.gif"
+          alt="Loading messages ..."
         />
-        {isOpenProfile && <Profile onClose={() => setIsOpenProfile(false)} />}
       </div>
-      <div className="w-2/3 h-full flex flex-col items-center">
-        <div  className="w-full max-w-3xl h-[calc(100vh-160px)] mt-5 rounded-xl bg-white/10 backdrop-blur-2xl border border-zinc-700 shadow-md">
-          <ChatWindow
-            messages={messages}
-            isTyping={isTyping}
-            page={page}
-            setPage={setPage}
-            hasMore={hasMore}
-            loadHistoryPage={loadHistoryPage}
-            justLoaded={justLoaded}
-          />
-        </div>
-        <InputBar input={input} setInput={setInput} sendMessage={handleSend} />
-      </div>
+    ) : (
+      <ChatWindow
+        messages={messages}
+        isTyping={isTyping}
+        page={page}
+        setPage={setPage}
+        hasMore={hasMore}
+        loadHistoryPage={loadHistoryPage}
+        justLoaded={justLoaded}
+      />
+    )}
+  </div>
+
+  <InputBar input={input} setInput={setInput} sendMessage={handleSend} />
+</div>
     </div>
   );
 }

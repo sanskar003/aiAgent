@@ -1,28 +1,16 @@
-import { useRef } from "react";
-
 export default function InputBar({ input, setInput, sendMessage }) {
-  const textareaRef = useRef(null);
-
-  const handleSend = () => {
-    sendMessage();
-    setInput("");
-    if (textareaRef.current) {
-      textareaRef.current.style.height = "auto";
-    }
-  };
-
   return (
-    <div className="fixed bottom-10 left-1/2 transform -translate-x-1/2 w-full px-3 sm:px-5 md:px-6 max-w-3xl z-10">
-      <div className="bg-zinc-600/80 backdrop-blur-md border border-zinc-700 rounded-2xl p-1.5">
-        <div className="flex items-center bg-zinc-800 rounded-xl px-2 sm:px-3 py-1.5 shadow-md border border-zinc-700 gap-3">
+    <div className="fixed bottom-10 left-1/2 transform -translate-x-1/2 w-full px-4 sm:px-6 md:px-8 max-w-3xl z-10">
+      <div className="bg-zinc-600/80 backdrop-blur-md border-t border-zinc-700 rounded-3xl p-2">
+        <div className="flex items-center bg-zinc-800 rounded-2xl px-3 sm:px-4 py-2 shadow-md border border-zinc-700 gap-3">
 
           {/* Synthra Logo Pulse Block */}
-          <div className="relative flex-shrink-0 w-7 h-7 sm:w-8 sm:h-8 md:w-9 md:h-9">
+          <div className="relative flex-shrink-0 w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 lg:w-12 lg:h-12">
             <div className="absolute inset-0 rounded-full bg-white/20 blur-xl animate-pulse z-0" />
             <div className="bg-white/10 backdrop-blur-sm rounded-tr-full rounded-bl-full relative z-10 w-full h-full flex items-center justify-center">
               <div className="rotate-90 bg-red-500/35 backdrop-blur-sm rounded-tr-full rounded-bl-full w-full h-full flex items-center justify-center">
                 <img
-                  className="rotate-90 w-4 h-4 sm:w-5 sm:h-5 lg:w-10 lg:h-10"
+                  className="rotate-90 w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7"
                   src="/images/aiInterface.gif"
                   alt="Synthra AI"
                 />
@@ -32,9 +20,8 @@ export default function InputBar({ input, setInput, sendMessage }) {
 
           {/* Text Input */}
           <textarea
-            ref={textareaRef}
             rows={1}
-            className="flex-grow resize-none bg-transparent font-amiamie text-white placeholder-gray-400 focus:outline-none text-sm sm:text-base max-h-60 overflow-y-auto leading-tight"
+            className="flex-grow resize-none bg-transparent font-amiamie text-white placeholder-gray-400 focus:outline-none text-base max-h-80 overflow-y-auto"
             value={input}
             onChange={(e) => {
               setInput(e.target.value);
@@ -44,7 +31,7 @@ export default function InputBar({ input, setInput, sendMessage }) {
             onKeyDown={(e) => {
               if (e.key === "Enter" && !e.shiftKey) {
                 e.preventDefault();
-                handleSend();
+                sendMessage();
               }
             }}
             placeholder="Know everything"
@@ -52,11 +39,11 @@ export default function InputBar({ input, setInput, sendMessage }) {
 
           {/* Send Button */}
           <button
-            onClick={handleSend}
-            className="ml-1 bg-red-500 hover:bg-red-700 rounded-full transition-colors text-white font-medium flex items-center justify-center p-1"
+            onClick={sendMessage}
+            className="ml-2 bg-red-500 hover:bg-red-700 rounded-full transition-colors text-white font-medium flex items-center justify-center p-1"
           >
             <img
-              className="w-5 h-5 sm:w-6 sm:h-6 hover:scale-90 transition-transform"
+              className="w-6 h-6 sm:w-7 sm:h-7 hover:scale-90 transition-transform"
               src="/images/input-sentIcon.png"
               alt="send"
             />

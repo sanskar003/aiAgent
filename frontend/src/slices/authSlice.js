@@ -2,11 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   token: null,
-  threadID: null,
-  user: {
-    name: "",
-    email: "",
-  }
+  user: { name: "", email: "" }
 };
 
 const authSlice = createSlice({
@@ -15,13 +11,11 @@ const authSlice = createSlice({
   reducers: {
     setAuth(state, action) {
       state.token = action.payload.token;
-      state.threadID = action.payload.threadID;
       state.user = action.payload.user;
     },
     clearAuth(state) {
       state.token = null;
-      state.threadID = null;
-      state.user = {name : "", email : ""};
+      state.user = { name: "", email: "" };
     }
   }
 });

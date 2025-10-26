@@ -5,7 +5,7 @@ import { TavilySearch } from "@langchain/tavily";
 import { MemorySaver } from "@langchain/langgraph";
 
 // 🧠 Memory for conversation continuity
-const checkpoints = new MemorySaver();
+export const checkpoints = new MemorySaver();
 
 // 🔍 Tavily web search tool
 const webSearch = new TavilySearch({
@@ -24,19 +24,17 @@ const llm = new ChatGroq({
   temperature: 0.2,
   maxRetries: 2,
 }).bindTools(tools, {
-  instructions: `
-You are premium chatbot agent, a helpful, structured, markdown-savvy assistant.
+instructions: `
+You are a premium chatbot agent, a helpful, structured, markdown-savvy assistant.
 
 Your goals:
-- Respond with clarity, empathy, and precision.
-- Use markdown formatting: headings, bullet points, links, tables, and code blocks.
-- When answering with lists or product info, include images if available.
-- Prefer tool-based, grounded answers over speculation.
-- Ask clarifying questions if the user's intent is ambiguous.
-- Avoid overly casual or robotic tone — be professional but friendly.
-- When using TavilySearch, format results as rich cards or tables with title, summary, link, and image.
-- If a user asks for a table, include headers and rows with clean formatting.
-`,
+- Use TavilySearch to gather facts, then synthesize a custom markdown response.
+- Format answers using headings, bullet points, tables, and code blocks.
+- Cite sources at the top or bottom using numbered references like [1], [2].
+- Never return raw search results or link lists unless explicitly asked.
+- Always explain, summarize, and format clearly.
+- Be professional but friendly. Avoid overly casual or robotic tone.
+`
 });
 
 // 🧵 Agent node
@@ -78,33 +76,42 @@ const workflow = new StateGraph(MessagesAnnotation)
 
 export const graphApp = workflow.compile({ checkpoints });
 
-
 // Format AI message for frontend
+// export function formatAIMessage(content) {
+//   if (typeof content === "string") {
+//     return { type: "text", reply: content.trim() };
+//   }
+
+//   //added this mermade
+//   if (typeof content === "string" && content.includes("flowchart")) {
+//     return { type: "mermaid", reply: content };
+//   }
+
+//   if (Array.isArray(content)) {
+//     return {
+//       type: "list",
+//       reply: content.map((item) => ({
+//         title: item.title || "Untitled",
+//         url: item.url || null,
+//         summary: item.content || null,
+//       })),
+//     };
+//   }
+
+//   if (typeof content === "object" && content !== null) {
+//     return { type: "card", reply: content };
+//   }
+
+//   return { type: "text", reply: String(content) };
+// }
+
 export function formatAIMessage(content) {
   if (typeof content === "string") {
-    return { type: "text", reply: content.trim() };
+    if (content.includes("flowchart")) {
+      return { type: "mermaid", reply: content };
+    }
+    return { type: "markdown", reply: content.trim() };
   }
 
-  //added this mermade 
-   if (typeof content === "string" && content.includes("flowchart")) {
-    return { type: "mermaid", reply: content };
-  }
-
-
-  if (Array.isArray(content)) {
-    return {
-      type: "list",
-      reply: content.map((item) => ({
-        title: item.title || "Untitled",
-        url: item.url || null,
-        summary: item.content || null,
-      })),
-    };
-  }
-
-  if (typeof content === "object" && content !== null) {
-    return { type: "card", reply: content };
-  }
-
-  return { type: "text", reply: String(content) };
+  return { type: "markdown", reply: String(content) };
 }

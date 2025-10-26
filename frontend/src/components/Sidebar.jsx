@@ -1,76 +1,194 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  fetchThreads,
+  createThread,
+  deleteThread,
+  renameThread,
+  setActiveThread,
+} from "../slices/threadsSlice.js";
+import { openProfile } from "../slices/uiSlice.js";
+import gsap from "gsap";
 
-export default function Sidebar({ onProfileOpen, logo = "YourBrand" }) {
-  const [collapsed, setCollapsed] = useState(false);
+export default function Sidebar() {
+  const [collapsed, setCollapsed] = useState(true);
+  const [editingId, setEditingId] = useState(null);
+  const [tempTitle, setTempTitle] = useState("");
+  const [menuOpenId, setMenuOpenId] = useState(null);
+
+  const sidebarRef = useRef();
+  const dispatch = useDispatch();
+  const { items: threads, activeThreadId } = useSelector(
+    (state) => state.threads
+  );
+
+  useEffect(() => {
+    dispatch(fetchThreads());
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (!sidebarRef.current) return;
+    gsap.to(sidebarRef.current, {
+      x: collapsed ? "-105%" : "0%",
+      duration: 0.4,
+      ease: "power.out",
+    });
+  }, [collapsed]);
 
   return (
-    <aside
-      className={`fixed left-2 top-4 h-[95%] border-3 rounded-2xl ${
-        collapsed ? "w-16" : "w-64"
-      } bg-zinc-900/80 backdrop-blur-md border-zinc-700 text-white flex flex-col transition-[width] duration-200 ease-out z-20`}
-    >
-      {/* Top section: collapse toggle + logo */}
-      <div className="px-3 py-3 border-b border-zinc-800">
-        <div
-          className={`flex items-center ${
-            collapsed ? "justify-center" : "justify-between"
-          } gap-2`}
-        >
-          {/* Collapse toggle */}
-          <button
-            onClick={() => setCollapsed((v) => !v)}
-            className="rounded-md hover:bg-zinc-800 transition-colors"
-            aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-            title={collapsed ? "Expand" : "Collapse"}
-          >
-            <img
-              className={`w-6 h-6 bg-red-500 p-0.5 hover:scale-90 rounded-2xl ${
-                collapsed ? "rotate-90" : "-rotate-90"
-              }`}
-              src="/images/Sidebar-collapseArrow.png"
-              alt="toggle"
-            />
-          </button>
-
-          {/* Logo */}
-          {!collapsed && (
-            <div className="ml-2 text-sm font-semibold tracking-wide select-none">
-              {logo}
+    <>
+      {/* Sidebar */}
+      <aside
+        ref={sidebarRef}
+        className="fixed left-2 top-4 h-[95%] rounded-2xl w-64 md:w-80 lg:w-65 bg-zinc-900/90 backdrop-blur-md border-2 border-zinc-700 text-white flex flex-col z-20 overflow-hidden"
+      >
+        {/* Expanded content */}
+        {!collapsed && (
+          <>
+            {/* Logo + Add icon */}
+            <div className="px-3 py-3 border-b border-zinc-800 flex justify-between items-center">
+              <div className="font-amiamie-light-italic h-10 flex items-center">
+                <img
+                  className="w-17 h-17 mx-10"
+                  src="/images/logo.png"
+                  alt="synthra"
+                />
+              </div>
+              <img
+                onClick={() => dispatch(createThread("New Thread"))}
+                className="w-7 h-7 bg-stone-100 rounded-full hover:bg-red-500 cursor-pointer transition-all duration-300"
+                src="/images/Sidebar-addIcon.png"
+                alt="Add"
+              />
             </div>
-          )}
-        </div>
-      </div>
 
-      {/* Middle section: placeholder */}
-      <div className="flex-1 overflow-y-auto px-3 py-3">
-        {!collapsed ? (
-          <div className="text-zinc-400 text-sm">Welcome to your chat.</div>
-        ) : (
-          <div className="text-zinc-600 text-xs text-center">Chat</div>
+            {/* Threads list */}
+            <div className="flex-1 text-sm overflow-y-auto px-3 py-3">
+              <ul className="space-y-2 font-amiamie-round">
+                {Array.isArray(threads) &&
+                  threads.map((thread) => (
+                    <li
+                      key={thread._id}
+                      onClick={() => dispatch(setActiveThread(thread._id))}
+                      className={`px-3 py-1.5 rounded-2xl flex justify-between items-center ${
+                        activeThreadId === thread._id
+                          ? "bg-red-500/20"
+                          : "hover:bg-zinc-800"
+                      }`}
+                    >
+                      <div className="flex-1">
+                        {editingId === thread._id ? (
+                          <input
+                            value={tempTitle}
+                            onChange={(e) => setTempTitle(e.target.value)}
+                            onBlur={() => {
+                              dispatch(
+                                renameThread({ id: thread._id, title: tempTitle })
+                              );
+                              setEditingId(null);
+                            }}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter") {
+                                dispatch(
+                                  renameThread({
+                                    id: thread._id,
+                                    title: tempTitle,
+                                  })
+                                );
+                                setEditingId(null);
+                              }
+                            }}
+                            className="rounded-lg px-1"
+                            autoFocus
+                          />
+                        ) : (
+                          <span
+                            onDoubleClick={() => {
+                              setEditingId(thread._id);
+                              setTempTitle(thread.title);
+                            }}
+                            className="truncate cursor-text"
+                            title="Double-click to rename"
+                          >
+                            {thread.title}
+                          </span>
+                        )}
+                      </div>
+
+                      <div className="relative">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setMenuOpenId(
+                              menuOpenId === thread._id ? null : thread._id
+                            );
+                          }}
+                        >
+                          <img
+                            className="w-5 h-5 cursor-pointer"
+                            src="/images/Sidebar-moreIcon.png"
+                            alt="options"
+                          />
+                        </button>
+
+                        {menuOpenId === thread._id && (
+                          <div className="absolute right-0 mt-3 text-[0.8em] bg-stone-800 p-1 rounded-2xl z-10 w-25">
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setEditingId(thread._id);
+                                setTempTitle(thread.title);
+                                setMenuOpenId(null);
+                              }}
+                              className="w-full text-left px-3 py-1 rounded-xl hover:bg-zinc-700"
+                            >
+                              Rename
+                            </button>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                dispatch(deleteThread(thread._id));
+                                setMenuOpenId(null);
+                              }}
+                              className="w-full text-left px-3 py-1 rounded-xl text-red-400 hover:bg-red-500/20 hover:text-red-600"
+                            >
+                              Delete
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </li>
+                  ))}
+              </ul>
+            </div>
+
+            {/* Profile icon */}
+            <div className="border-t border-zinc-800 flex justify-end py-2 px-3">
+              <img
+                onClick={() => dispatch(openProfile())}
+                className="w-8 h-8 border border-red-600 rounded-full p-1 hover:bg-red-500 cursor-pointer transition-all duration-300"
+                src="/images/Sidebar-userIcon.png"
+                alt="profile"
+              />
+            </div>
+          </>
         )}
-      </div>
+      </aside>
 
-      {/* Bottom section: profile */}
-      <div className="mt-auto px-3 py-3 border-t border-zinc-800">
-        <div
-          className={`flex items-center ${
-            collapsed ? "justify-center" : "justify-between"
-          } gap-2`}
-        >
-          <button
-            onClick={onProfileOpen}
-            className="p-1.5 rounded-3xl bg-zinc-800 hover:bg-red-500 transition-colors flex items-center"
-            aria-label="Open profile"
-            title="Profile"
-          >
-            <img
-              className="w-6 h-6"
-              src="/images/Sidebar-userIcon.png"
-              alt="profile"
-            />
-          </button>
-        </div>
-      </div>
-    </aside>
+      {/* Toggle Icon (always visible) */}
+      <button
+        onClick={() => setCollapsed((v) => !v)}
+        className="fixed top-8 left-4 z-30 w-8 h-8 bg-red-600 rounded-full flex items-center justify-center hover:bg-red-500 transition"
+        aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+      >
+        <img
+          src="/images/Sidebar-collapseArrow.png"
+          alt="toggle"
+          className={`w-5 h-5 transition-transform duration-300 ${
+            collapsed ? "rotate-90" : "-rotate-90"
+          }`}
+        />
+      </button>
+    </>
   );
 }

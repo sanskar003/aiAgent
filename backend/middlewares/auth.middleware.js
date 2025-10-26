@@ -13,6 +13,8 @@ export async function verifyToken(req, res, next) {
   }
 
   const token = authHeader.split(" ")[1];
+  console.log(token);
+  
 
   try {
     // Wrap jwt.verify in a Promise so we can await it
