@@ -1,8 +1,10 @@
-const BASE_URL = "http://localhost:5000/api";
+// ✅ Use your deployed backend URL
+const BASE_URL = import.meta.env.VITE_API_BASE_URL.replace(/\/+$/, "");
+
 
 export async function login(email, password) {
   try {
-    const res = await fetch("http://localhost:5000/api/auth/login", {
+    const res = await fetch(`${BASE_URL}/auth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
@@ -11,7 +13,6 @@ export async function login(email, password) {
     const data = await res.json();
 
     if (!res.ok) {
-      // ✅ Use data.error instead of data.message
       throw new Error(data.error || "Login failed");
     }
 
@@ -32,17 +33,17 @@ export const register = async (username, email, password) => {
   });
 
   if (!res.ok) throw new Error("Registration failed");
-  return res.json(); // should return { token, threadID }
+  return res.json(); // { token, threadID }
 };
 
 export const sendChatMessage = async (token, messages, threadID) => {
-  const res = await fetch("http://localhost:5000/api/chat", {
+  const res = await fetch(`${BASE_URL}/chat`, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json"
+      "Content-Type": "application/json",
     },
-    body: JSON.stringify({ messages, threadID }) // ✅ now threadID is defined
+    body: JSON.stringify({ messages, threadID }),
   });
 
   if (!res.ok) {
@@ -53,15 +54,17 @@ export const sendChatMessage = async (token, messages, threadID) => {
   return await res.json();
 };
 
-
 export async function fetchHistory(token, threadID, page = 1, limit = 30) {
-  const res = await fetch(`http://localhost:5000/api/history/${threadID}?page=${page}&limit=${limit}`, {
-    method: "GET",
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    },
-  });
+  const res = await fetch(
+    `${BASE_URL}/history/${threadID}?page=${page}&limit=${limit}`,
+    {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    }
+  );
 
   if (!res.ok) {
     const errorText = await res.text();

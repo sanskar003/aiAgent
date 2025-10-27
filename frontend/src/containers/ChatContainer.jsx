@@ -55,7 +55,6 @@ export default function ChatContainer() {
       (async () => {
         try {
           const latest = await fetchHistory(token, activeThreadId, 1, 20);
-          console.log("Fetched messages:", latest); // ✅ log response
           dispatch(setMessages(latest));
           setPage(2);
         } catch (err) {

@@ -19,9 +19,6 @@ export default function App() {
   const { profileOpen, aboutOpen } = useSelector((state) => state.ui);
   const [rehydrated, setRehydrated] = useState(false);
 
-  useEffect(() => {
-    console.log("Profile modal open:", profileOpen);
-  }, [profileOpen]);
 
   useEffect(() => {
     const savedAuth = localStorage.getItem("auth");
