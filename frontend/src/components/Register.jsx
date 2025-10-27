@@ -16,33 +16,37 @@ export default function Register() {
   });
 
   async function handleRegister(values, actions) {
-    try {
-      localStorage.clear();
-      localStorage.removeItem("activeThreadId");
+  try {
+    localStorage.clear();
 
-      const { token, user } = await register(values.name, values.email, values.password);
-      dispatch(setAuth({ token, user }));
-      localStorage.setItem("auth", JSON.stringify({ token, user }));
-      navigate("/");
-    } catch (err) {
-      console.error("Registration failed:", err);
-      actions.setSubmitting(false);
+    const { token, user, threadID } = await register(values.name, values.email, values.password);
 
-      const msg = err.message?.toLowerCase() || "";
-      let errorText = "Registration failed. Please try again.";
-
-      if (msg.includes("already") || msg.includes("exists")) {
-        errorText = "An account with this email already exists.";
-      } else if (msg.includes("invalid")) {
-        errorText = "Please enter valid details.";
-      } else if (msg.includes("network")) {
-        errorText = "Unable to connect. Check your internet connection.";
-      }
-
-      actions.setFieldError("email", errorText);
-      actions.setStatus(errorText);
+    dispatch(setAuth({ token, user }));
+    localStorage.setItem("auth", JSON.stringify({ token, user }));
+    if (threadID) {
+      localStorage.setItem("activeThreadId", threadID);
     }
+
+    navigate("/");
+  } catch (err) {
+    console.error("Registration failed:", err);
+
+    const msg = err.message?.toLowerCase() || "";
+    let errorText = "Registration failed. Please try again.";
+
+    if (msg.includes("already") || msg.includes("exists")) {
+      errorText = "An account with this email already exists.";
+    } else if (msg.includes("invalid")) {
+      errorText = "Please enter valid details.";
+    } else if (msg.includes("network")) {
+      errorText = "Unable to connect. Check your internet connection.";
+    }
+
+    actions.setStatus(errorText);
+  } finally {
+    actions.setSubmitting(false);
   }
+}
 
   return (
     <div className="flex items-center justify-center h-screen bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900 font-amiamie-round p-3 sm:p-3 md:p-0 lg:p-0">

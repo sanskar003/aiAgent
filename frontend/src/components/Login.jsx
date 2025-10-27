@@ -62,6 +62,7 @@ export default function Login() {
 
               <div>
                 <Field
+                  id="email"
                   name="email"
                   type="email"
                   placeholder="Email"
@@ -76,6 +77,7 @@ export default function Login() {
 
               <div>
                 <Field
+                  id="password"
                   name="password"
                   type="password"
                   placeholder="Password"
@@ -91,7 +93,7 @@ export default function Login() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full py-2 mt-4 rounded-xl border border-red-400 hover:bg-red-400 transition-all duration-300 text-white hover:text-black font-semibold  shadow-md"
+                className="w-full py-2 mt-4 rounded-xl border border-red-400 hover:bg-red-400 transition-all duration-300 text-white hover:text-black font-semibold shadow-md"
               >
                 {isSubmitting ? "Signing in..." : "Sign in"}
               </button>
