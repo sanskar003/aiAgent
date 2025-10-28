@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { useEffect, useState } from "react";
 import { setAuth } from "./slices/authSlice.js";
@@ -13,11 +13,16 @@ import About from "./components/About.jsx";
 import Main from "./components/Main.jsx";
 
 export default function App() {
+  const location = useLocation();
   const dispatch = useDispatch();
   const { token } = useSelector((state) => state.auth);
   const { activeThreadId } = useSelector((state) => state.threads);
   const { profileOpen, aboutOpen } = useSelector((state) => state.ui);
   const [rehydrated, setRehydrated] = useState(false);
+
+  // Hide sidebar on login/register
+  const hideSidebar = ["/login", "/register"].includes(location.pathname);
+
 
   useEffect(() => {
     const savedAuth = localStorage.getItem("auth");
@@ -48,28 +53,29 @@ export default function App() {
 
   return (
     <div className="flex h-screen">
-    <Sidebar />   {/* always visible */}
-    <div className="flex-1">
-      <Routes>
-        <Route path="/" element={<Main />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route
-          path="/chat"
-          element={
-            isAuthenticated ? (
-              hasActiveThread ? <ChatContainer /> : <Login />
-            ) : (
-              <Navigate to="/login" replace />
-            )
-          }
-        />
-      </Routes>
-    </div>
+      {!hideSidebar && <Sidebar />}   {/* 👈 sidebar visible everywhere except login/register */}
+      <div className="flex-1">
+        <Routes>
+          <Route path="/" element={<Main />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route
+            path="/chat"
+            element={
+              isAuthenticated ? (
+                hasActiveThread ? <ChatContainer /> : <EmptyChat />
+              ) : (
+                <Navigate to="/login" replace />
+              )
+            }
+          />
+        </Routes>
+      </div>
 
-    {profileOpen && <Profile onClose={() => dispatch(closeProfile())} />}
-    {aboutOpen && <About onClose={() => dispatch(closeAbout())} />}
-  </div>
+      {/* Global modals */}
+      {profileOpen && <Profile onClose={() => dispatch(closeProfile())} />}
+      {aboutOpen && <About onClose={() => dispatch(closeAbout())} />}
+    </div>
 
   );
 }

@@ -8,6 +8,7 @@ import {
   setActiveThread,
 } from "../slices/threadsSlice.js";
 import { openProfile } from "../slices/uiSlice.js";
+import { useNavigate } from "react-router-dom";
 import gsap from "gsap";
 
 export default function Sidebar() {
@@ -18,9 +19,10 @@ export default function Sidebar() {
 
   const sidebarRef = useRef();
   const dispatch = useDispatch();
-  const { items: threads, activeThreadId } = useSelector(
-    (state) => state.threads
-  );
+  const navigate = useNavigate();
+
+  const { items: threads, activeThreadId } = useSelector((state) => state.threads);
+  const isAuthenticated = useSelector((state) => Boolean(state.auth.token));
 
   useEffect(() => {
     dispatch(fetchThreads());
@@ -55,7 +57,18 @@ export default function Sidebar() {
                 />
               </div>
               <img
-                onClick={() => dispatch(createThread("New Thread"))}
+                onClick={() => {
+                  if (!isAuthenticated) {
+                    navigate("/login");
+                    return;
+                  }
+                  dispatch(createThread("New Thread"))
+                    .unwrap()
+                    .then((thread) => {
+                      dispatch(setActiveThread(thread._id));
+                      navigate("/chat");
+                    });
+                }}
                 className="w-7 h-7 bg-stone-100 rounded-full hover:bg-red-500 cursor-pointer transition-all duration-300"
                 src="/images/Sidebar-addIcon.png"
                 alt="Add"
@@ -82,19 +95,12 @@ export default function Sidebar() {
                             value={tempTitle}
                             onChange={(e) => setTempTitle(e.target.value)}
                             onBlur={() => {
-                              dispatch(
-                                renameThread({ id: thread._id, title: tempTitle })
-                              );
+                              dispatch(renameThread({ id: thread._id, title: tempTitle }));
                               setEditingId(null);
                             }}
                             onKeyDown={(e) => {
                               if (e.key === "Enter") {
-                                dispatch(
-                                  renameThread({
-                                    id: thread._id,
-                                    title: tempTitle,
-                                  })
-                                );
+                                dispatch(renameThread({ id: thread._id, title: tempTitle }));
                                 setEditingId(null);
                               }
                             }}
@@ -119,9 +125,7 @@ export default function Sidebar() {
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
-                            setMenuOpenId(
-                              menuOpenId === thread._id ? null : thread._id
-                            );
+                            setMenuOpenId(menuOpenId === thread._id ? null : thread._id);
                           }}
                         >
                           <img
@@ -165,7 +169,13 @@ export default function Sidebar() {
             {/* Profile icon */}
             <div className="border-t border-zinc-800 flex justify-end py-2 px-3">
               <img
-                onClick={() => dispatch(openProfile())}
+                onClick={() => {
+                  if (!isAuthenticated) {
+                    navigate("/login");
+                    return;
+                  }
+                  dispatch(openProfile());
+                }}
                 className="w-8 h-8 border border-red-600 rounded-full p-1 hover:bg-red-500 cursor-pointer transition-all duration-300"
                 src="/images/Sidebar-userIcon.png"
                 alt="profile"

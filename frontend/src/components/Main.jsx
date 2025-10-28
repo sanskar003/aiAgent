@@ -6,18 +6,22 @@ import { useNavigate } from "react-router-dom";
 
 export default function Main() {
   const user = useSelector((state) => state.auth?.user?.name);
+  const isAuthenticated = useSelector((state) => Boolean(state.auth.token));
   const dispatch = useDispatch();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
-  const handelNewThread = () => {
-    const action = createThread("New Thread");
-    const result = dispatch(action);
-    navigate("/chat")
+  const handleNewThread = async () => {
+    if (!isAuthenticated) {
+      navigate("/login");
+      return;
+    }
 
-    if (result.unwrap) {
-      result.unwrap().then((thread) => {
-        dispatch(setActiveThread(thread._id));
-      });
+    try {
+      const thread = await dispatch(createThread("New Thread")).unwrap();
+      dispatch(setActiveThread(thread._id));
+      navigate("/chat");
+    } catch (err) {
+      console.error("Failed to create thread:", err);
     }
   };
 
@@ -77,7 +81,7 @@ export default function Main() {
             color="red"
             speed="3s"
           >
-            <span className="cursor-pointer" onClick={handelNewThread}>
+            <span className="cursor-pointer" onClick={handleNewThread}>
               Start New Thread
             </span>
           </StarBorder>
