@@ -19,7 +19,6 @@ export default function App() {
   const { profileOpen, aboutOpen } = useSelector((state) => state.ui);
   const [rehydrated, setRehydrated] = useState(false);
 
-
   useEffect(() => {
     const savedAuth = localStorage.getItem("auth");
     const savedThreadId = localStorage.getItem("activeThreadId");
@@ -50,10 +49,16 @@ export default function App() {
   return (
     <>
       <Routes>
+        {/* Public landing page */}
+        <Route path="/" element={<Main />} />
+
+        {/* Auth routes */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+
+        {/* Protected chat route */}
         <Route
-          path="/"
+          path="/chat"
           element={
             isAuthenticated ? (
               <div className="flex h-screen">
@@ -63,7 +68,7 @@ export default function App() {
                 </div>
               </div>
             ) : (
-              <Navigate to="/login" />
+              <Navigate to="/login" replace />
             )
           }
         />
