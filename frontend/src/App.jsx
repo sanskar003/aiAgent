@@ -47,36 +47,29 @@ export default function App() {
   if (!rehydrated) return null;
 
   return (
-    <>
+    <div className="flex h-screen">
+    <Sidebar />   {/* always visible */}
+    <div className="flex-1">
       <Routes>
-        {/* Public landing page */}
-        <Route path="/" element={<Main/>} />
-
-        {/* Auth routes */}
+        <Route path="/" element={<Main />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-
-        {/* Protected chat route */}
         <Route
           path="/chat"
           element={
             isAuthenticated ? (
-              <div className="flex h-screen">
-                <Sidebar />
-                <div className="flex-1">
-                  {hasActiveThread ? <ChatContainer /> : <Main />}
-                </div>
-              </div>
+              hasActiveThread ? <ChatContainer /> : <EmptyChat />
             ) : (
               <Navigate to="/login" replace />
             )
           }
         />
       </Routes>
+    </div>
 
-      {/* Global modals */}
-      {profileOpen && <Profile onClose={() => dispatch(closeProfile())} />}
-      {aboutOpen && <About onClose={() => dispatch(closeAbout())} />}
-    </>
+    {profileOpen && <Profile onClose={() => dispatch(closeProfile())} />}
+    {aboutOpen && <About onClose={() => dispatch(closeAbout())} />}
+  </div>
+
   );
 }
