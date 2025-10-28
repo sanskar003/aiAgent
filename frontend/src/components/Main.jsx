@@ -2,14 +2,17 @@ import { useSelector, useDispatch } from "react-redux";
 import Threads from "./Threads";
 import StarBorder from "./StarBorder";
 import { createThread, setActiveThread } from "../slices/threadsSlice";
+import { useNavigate } from "react-router-dom";
 
 export default function Main() {
   const user = useSelector((state) => state.auth?.user?.name);
   const dispatch = useDispatch();
+  const navigate = useNavigate()
 
   const handelNewThread = () => {
     const action = createThread("New Thread");
     const result = dispatch(action);
+    navigate("/chat")
 
     if (result.unwrap) {
       result.unwrap().then((thread) => {
