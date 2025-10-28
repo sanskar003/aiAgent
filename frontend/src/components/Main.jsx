@@ -41,7 +41,7 @@ export default function Main() {
         />
 
         {/* AI interface animation */}
-        <div className="absolute top-30 sm:top-30 md:top-35 lg:top-50 w-10 sm:w-10 md:w-10 lg:w-20 z-10">
+        <div className="absolute top-30 sm:top-30 md:top-35 lg:top-53 w-10 sm:w-10 md:w-10 lg:w-20 z-10">
           <div className="absolute inset-0 rounded-full bg-white/20 blur-xl animate-pulse z-0" />
           <div className="bg-white/10 backdrop-blur-sm rounded-tr-full rounded-bl-full relative z-10">
             <div className="rotate-90 bg-red-500/35 backdrop-blur-sm rounded-tr-full rounded-bl-full">
