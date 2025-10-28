@@ -1,53 +1,83 @@
-export default function InputBar({ input, setInput, sendMessage }) {
-  return (
-    <div className="fixed bottom-10 left-1/2 transform -translate-x-1/2 w-full px-4 sm:px-6 md:px-8 max-w-3xl z-10">
-      <div className="bg-zinc-600/80 backdrop-blur-md border-t border-zinc-700 rounded-3xl p-2">
-        <div className="flex items-center bg-zinc-800 rounded-2xl px-3 sm:px-4 py-2 shadow-md border border-zinc-700 gap-3">
+import { useSelector, useDispatch } from "react-redux";
+import Threads from "./Threads";
+import StarBorder from "./StarBorder";
+import { createThread, setActiveThread } from "../slices/threadsSlice";
 
-          {/* Synthra Logo Pulse Block */}
-          <div className="relative flex-shrink-0 w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 lg:w-12 lg:h-12">
-            <div className="absolute inset-0 rounded-full bg-white/20 blur-xl animate-pulse z-0" />
-            <div className="bg-white/10 backdrop-blur-sm rounded-tr-full rounded-bl-full relative z-10 w-full h-full flex items-center justify-center">
-              <div className="rotate-90 bg-red-500/35 backdrop-blur-sm rounded-tr-full rounded-bl-full w-full h-full flex items-center justify-center">
-                <img
-                  className="rotate-90 w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7"
-                  src="/images/aiInterface.gif"
-                  alt="Synthra AI"
-                />
-              </div>
+export default function Main() {
+  const user = useSelector((state) => state.auth?.user?.name);
+  const dispatch = useDispatch();
+
+  const handelNewThread = () => {
+    const action = createThread("New Thread");
+    const result = dispatch(action);
+
+    if (result.unwrap) {
+      result.unwrap().then((thread) => {
+        dispatch(setActiveThread(thread._id));
+      });
+    }
+  };
+
+  return (
+    <div className="flex flex-col items-center justify-start h-full text-zinc-400 relative overflow-hidden px-4 sm:px-6 md:px-8">
+      {/* Threads background */}
+      <div className="absolute h-full w-full -z-10">
+        <Threads amplitude={1} distance={0} enableMouseInteraction={false} />
+      </div>
+
+      <div className="relative flex flex-col justify-center items-center mt-6 sm:mt-10">
+        {/* Logo */}
+        <img
+          className="max-w-[60vw] sm:max-w-[40vw] md:max-w-[25vw] z-10"
+          src="/images/logo.png"
+          alt="Synthra logo"
+        />
+
+        {/* AI interface animation */}
+        <div className="absolute top-50 w-20 z-10">
+          <div className="absolute inset-0 rounded-full bg-white/20 blur-xl animate-pulse z-0" />
+          <div className="bg-white/10 backdrop-blur-sm rounded-tr-full rounded-bl-full relative z-10">
+            <div className="rotate-90 bg-red-500/35 backdrop-blur-sm rounded-tr-full rounded-bl-full">
+              <img
+                className="rotate-90"
+                src="/images/aiInterface.gif"
+                alt="lets CHAT"
+              />
             </div>
           </div>
+        </div>
+      </div>
 
-          {/* Text Input */}
-          <textarea
-            rows={1}
-            className="flex-grow resize-none bg-transparent font-amiamie text-white placeholder-gray-400 focus:outline-none text-base max-h-80 overflow-y-auto"
-            value={input}
-            onChange={(e) => {
-              setInput(e.target.value);
-              e.target.style.height = "auto";
-              e.target.style.height = `${e.target.scrollHeight}px`;
-            }}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && !e.shiftKey) {
-                e.preventDefault();
-                sendMessage();
-              }
-            }}
-            placeholder="Know everything"
-          />
+      {/* Welcome block */}
+      <div className="text-center max-w-xl w-full px-4 sm:px-6 z-10">
+        <h1 className="text-3xl sm:text-4xl font-amiamie-round text-stone-100">
+          Welcome {user}
+        </h1>
 
-          {/* Send Button */}
-          <button
-            onClick={sendMessage}
-            className="ml-2 bg-red-500 hover:bg-red-700 rounded-full transition-colors text-white font-medium flex items-center justify-center p-1"
+        <p className="mt-2 text-lg sm:text-xl text-zinc-300 font-amiamie-round">
+          A space where your questions spark conversations with an{" "}
+          <span className="bg-gradient-to-r from-teal-500 via-purple-500 to-red-500 bg-clip-text text-transparent">
+            intelligent chat agent
+          </span>
+          , and every idea finds its thread.
+        </p>
+
+        <p className="mt-6 text-sm text-zinc-500 font-amiamie">
+          Start a new thread or continue where you left off — Synthra, your AI
+          companion, remembers the flow.
+        </p>
+
+        <div className="mt-6 flex flex-wrap gap-3 justify-center font-amiamie">
+          <StarBorder
+            as="button"
+            className="custom-class hover:bg-red-400 cursor-pointer"
+            color="red"
+            speed="3s"
           >
-            <img
-              className="w-6 h-6 sm:w-7 sm:h-7 hover:scale-90 transition-transform"
-              src="/images/input-sentIcon.png"
-              alt="send"
-            />
-          </button>
+            <span className="cursor-pointer" onClick={handelNewThread}>
+              Start New Thread
+            </span>
+          </StarBorder>
         </div>
       </div>
     </div>

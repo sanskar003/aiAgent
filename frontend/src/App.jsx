@@ -50,7 +50,7 @@ export default function App() {
     <>
       <Routes>
         {/* Public landing page */}
-        <Route path="/" element={<Main />} />
+        <Route path="/" element={<Main/>} />
 
         {/* Auth routes */}
         <Route path="/login" element={<Login />} />
