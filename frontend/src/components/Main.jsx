@@ -32,16 +32,16 @@ export default function Main() {
         <Threads amplitude={1} distance={0} enableMouseInteraction={false} />
       </div>
 
-      <div className="relative flex flex-col justify-center items-center mt-6 sm:mt-10">
+      <div className="relative flex flex-col justify-center items-center mt-6 sm:mt-10 md:mt-10 lg:mt-0">
         {/* Logo */}
         <img
-          className="max-w-[60vw] sm:max-w-[40vw] md:max-w-[25vw] z-10"
+          className="max-w-[60vw] sm:max-w-[40vw] md:max-w-[30vw] lg:max-w-[25vw] z-10"
           src="/images/logo.png"
           alt="Synthra logo"
         />
 
         {/* AI interface animation */}
-        <div className="absolute top-50 w-20 z-10">
+        <div className="absolute top-30 sm:top-30 md:top-35 lg:top-50 w-10 sm:w-10 md:w-10 lg:w-20 z-10">
           <div className="absolute inset-0 rounded-full bg-white/20 blur-xl animate-pulse z-0" />
           <div className="bg-white/10 backdrop-blur-sm rounded-tr-full rounded-bl-full relative z-10">
             <div className="rotate-90 bg-red-500/35 backdrop-blur-sm rounded-tr-full rounded-bl-full">
@@ -61,7 +61,7 @@ export default function Main() {
           Welcome {user}
         </h1>
 
-        <p className="mt-2 text-lg sm:text-xl text-zinc-300 font-amiamie-round">
+        <p className="mt-6 sm:mt-5 md:mt-5 lg:mt-5 text-lg sm:text-xl text-zinc-300 font-amiamie-round">
           A space where your questions spark conversations with an{" "}
           <span className="bg-gradient-to-r from-teal-500 via-purple-500 to-red-500 bg-clip-text text-transparent">
             intelligent chat agent
@@ -74,10 +74,10 @@ export default function Main() {
           companion, remembers the flow.
         </p>
 
-        <div className="mt-6 flex flex-wrap gap-3 justify-center font-amiamie">
+        <div className="mt-10 flex flex-wrap gap-3 justify-center font-amiamie">
           <StarBorder
             as="button"
-            className="custom-class hover:bg-red-400 cursor-pointer"
+            className="custom-class cursor-pointer"
             color="red"
             speed="3s"
           >
