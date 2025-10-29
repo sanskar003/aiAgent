@@ -41,7 +41,7 @@ router.post("/", verifyToken, async (req, res) => {
     const greeting = getGreetingMessage(userName);
 
     const message = await Message.create({
-      threadId: thread._id.toString(),
+      threadID: thread._id.toString(),
       sender: "ai",
       text: greeting,
     });
