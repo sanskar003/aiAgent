@@ -41,10 +41,9 @@ router.post("/", verifyToken, async (req, res) => {
     const greeting = getGreetingMessage(userName);
 
     const message = await Message.create({
-      threadId: thread._id,
-      role: "assistant",
-      content: greeting,
-      createdAt: new Date(),
+      threadId: thread._id.toString(),
+      sender: "ai",
+      text: greeting,
     });
 
     res.status(201).json({

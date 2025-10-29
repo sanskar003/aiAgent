@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import DOMPurify from "dompurify";
 
 export default function InputBar({ input, setInput, sendMessage }) {
   const textareaRef = useRef(null);
@@ -13,7 +14,13 @@ export default function InputBar({ input, setInput, sendMessage }) {
     const trimmed = input.trim();
     if (!trimmed) return;
 
-    sendMessage(trimmed);
+    // 🧼 Sanitize input to block HTML tags but preserve code-friendly characters
+    const clean = DOMPurify.sanitize(trimmed, {
+      ALLOWED_TAGS: [], // block all HTML tags
+      ALLOWED_ATTR: [], // block all attributes
+    });
+
+    sendMessage(clean);
     setInput("");
 
     if (textareaRef.current) {
