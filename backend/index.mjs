@@ -1,3 +1,4 @@
+// app.js
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
@@ -12,13 +13,13 @@ dotenv.config();
 
 const app = express();
 
-// ✅ Define allowed origins
+// ✅ CORS setup
 const allowedOrigins = [
-  "https://synthra.vercel.app", // deployed frontend
-  "https://sanskar-portfolio-ten.vercel.app", // portfolio
+  "https://synthra.vercel.app",                 // FRONTEND SYNTHRA
+  "https://sanskar-portfolio-ten.vercel.app",   // PORTFOLIO
+  "http://localhost:5173",                      // LOCALHOST TEST  
 ];
 
-// ✅ Apply CORS middleware once, after app is created
 app.use(
   cors({
     origin: allowedOrigins,
@@ -27,11 +28,10 @@ app.use(
   })
 );
 
-
 // ✅ JSON body parser
 app.use(express.json({ limit: "20mb" }));
 
-
+// ✅ MongoDB connection middleware
 app.use(async (req, res, next) => {
   try {
     await connectDB();
@@ -39,23 +39,16 @@ app.use(async (req, res, next) => {
   } catch (err) {
     res.status(500).json({ error: "Database connection failed" });
   }
-}); // ✅ Connect to MongoDB Atlas
-
-app.get("/favicon.png", (req, res) => {
-  res.status(204).end(); // No Content
 });
 
-// Health check
-app.get("/", (req, res) => {
-  res.send("Backend is running ✅");
-});
+// ✅ Favicon and health check
+app.get("/favicon.png", (req, res) => res.status(204).end());
+app.get("/", (req, res) => res.send("Backend is running ✅"));
 
-// Routes
+// ✅ Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/chat", chatRoutes);
 app.use("/api/history", historyRoutes);
 app.use("/api/threads", threadRoutes);
-
-
 
 export default app;

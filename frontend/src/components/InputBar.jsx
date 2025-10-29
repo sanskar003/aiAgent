@@ -1,21 +1,51 @@
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 
 export default function InputBar({ input, setInput, sendMessage }) {
   const textareaRef = useRef(null);
 
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.focus();
+    }
+  }, []);
+
   const handleSend = () => {
-    sendMessage();
+    const trimmed = input.trim();
+    if (!trimmed) return;
+
+    sendMessage(trimmed);
     setInput("");
+
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
     }
   };
 
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSend();
+    } else if (e.key === "Escape") {
+      setInput("");
+      if (textareaRef.current) {
+        textareaRef.current.style.height = "auto";
+      }
+    }
+  };
+
+  const handleChange = (e) => {
+    setInput(e.target.value);
+    e.target.style.height = "auto";
+    e.target.style.height = `${e.target.scrollHeight}px`;
+  };
+
   return (
     <div className="fixed bottom-10 left-1/2 transform -translate-x-1/2 w-full px-3 sm:px-5 md:px-6 max-w-3xl z-10">
       <div className="bg-zinc-600/80 backdrop-blur-md border border-zinc-700 rounded-2xl p-1.5">
-        <div className="flex items-center bg-zinc-800 rounded-xl px-2 sm:px-3 py-1.5 shadow-md border border-zinc-700 gap-3">
-
+        <div
+          className="flex items-center bg-zinc-800 rounded-xl px-2 sm:px-3 py-1.5 shadow-md border border-zinc-700 gap-3"
+          role="form"
+        >
           {/* Synthra Logo Pulse Block */}
           <div className="relative flex-shrink-0 w-7 h-7 sm:w-8 sm:h-8 md:w-9 md:h-9">
             <div className="absolute inset-0 rounded-full bg-white/20 blur-xl animate-pulse z-0" />
@@ -36,24 +66,22 @@ export default function InputBar({ input, setInput, sendMessage }) {
             rows={1}
             className="flex-grow resize-none bg-transparent font-amiamie text-white placeholder-gray-400 focus:outline-none text-sm sm:text-base max-h-60 overflow-y-auto leading-tight"
             value={input}
-            onChange={(e) => {
-              setInput(e.target.value);
-              e.target.style.height = "auto";
-              e.target.style.height = `${e.target.scrollHeight}px`;
-            }}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && !e.shiftKey) {
-                e.preventDefault();
-                handleSend();
-              }
-            }}
+            onChange={handleChange}
+            onKeyDown={handleKeyDown}
             placeholder="Know everything"
+            aria-label="Type your message"
           />
 
           {/* Send Button */}
           <button
             onClick={handleSend}
-            className="ml-1 bg-red-500 hover:bg-red-700 rounded-full transition-colors text-white font-medium flex items-center justify-center p-1"
+            disabled={!input.trim()}
+            className={`ml-1 rounded-full transition-colors text-white font-medium flex items-center justify-center p-1 ${
+              input.trim()
+                ? "bg-red-500 hover:bg-red-700"
+                : "bg-zinc-700 cursor-not-allowed"
+            }`}
+            aria-label="Send message"
           >
             <img
               className="w-5 h-5 sm:w-6 sm:h-6 hover:scale-90 transition-transform"
