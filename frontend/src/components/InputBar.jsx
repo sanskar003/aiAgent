@@ -71,12 +71,11 @@ export default function InputBar({ input, setInput, sendMessage }) {
           <textarea
             ref={textareaRef}
             rows={1}
-            className="flex-grow resize-none bg-transparent font-amiamie text-white placeholder-gray-400 focus:outline-none text-sm sm:text-base max-h-60 overflow-y-auto leading-tight"
+            className="flex-grow resize-none bg-transparent font-amiamie-round text-white placeholder-gray-400 focus:outline-none text-sm sm:text-base max-h-60 overflow-y-auto leading-tight"
             value={input}
             onChange={handleChange}
             onKeyDown={handleKeyDown}
             placeholder="Know everything"
-            aria-label="Type your message"
           />
 
           {/* Send Button */}
