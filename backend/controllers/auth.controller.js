@@ -16,7 +16,7 @@ export const register = async (req, res) => {
     const threadID = uuidv4();
 
     const user = await User.create({ username, email, password: passwordHash, threadID });
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: "7d" });
+    const token = jwt.sign({ userId: user._id, username:user.name }, process.env.JWT_SECRET, { expiresIn: "7d" });
 
     console.log("Incoming registration:", req.body);
     return res.status(201).json({
@@ -40,7 +40,7 @@ export const login = async (req, res) => {
     const valid = await bcrypt.compare(password, user.password);
     if (!valid) return res.status(401).json({ error: "Invalid credentials" });
 
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: "7d" });
+    const token = jwt.sign({ userId: user._id, username:user.name }, process.env.JWT_SECRET, { expiresIn: "7d" });
 
     return res.status(200).json({
       token,

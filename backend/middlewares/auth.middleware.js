@@ -29,6 +29,7 @@ export async function verifyToken(req, res, next) {
 
     // Make sure this matches what you signed in authController
     req.userId = decoded.userId;  
+    req.userName = decoded?.username || "explorer";
 
     next();
   } catch (err) {
