@@ -11,6 +11,7 @@ import Sidebar from "./components/Sidebar.jsx";
 import Profile from "./components/Profile.jsx";
 import About from "./components/About.jsx";
 import Main from "./components/Main.jsx";
+import LandingLoader from "./components/LandingLoader.jsx";
 
 export default function App() {
   const location = useLocation();
@@ -18,11 +19,12 @@ export default function App() {
   const { token } = useSelector((state) => state.auth);
   const { activeThreadId } = useSelector((state) => state.threads);
   const { profileOpen, aboutOpen } = useSelector((state) => state.ui);
+
   const [rehydrated, setRehydrated] = useState(false);
+  const [transitioning, setTransitioning] = useState(false);
 
   // Hide sidebar on login/register
   const hideSidebar = ["/login", "/register"].includes(location.pathname);
-
 
   useEffect(() => {
     const savedAuth = localStorage.getItem("auth");
@@ -49,16 +51,19 @@ export default function App() {
   const isAuthenticated = Boolean(token);
   const hasActiveThread = Boolean(activeThreadId);
 
-  if (!rehydrated) return null;
+  // Show loader if not rehydrated or in transition
+  if (!rehydrated || transitioning) {
+    return <LandingLoader />;
+  }
 
   return (
     <div className="flex h-screen">
-      {!hideSidebar && <Sidebar />}   {/* 👈 sidebar visible everywhere except login/register */}
+      {!hideSidebar && <Sidebar />}
       <div className="flex-1">
         <Routes>
           <Route path="/" element={<Main />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
+          <Route path="/login" element={<Login setTransitioning={setTransitioning} />} />
+          <Route path="/register" element={<Register setTransitioning={setTransitioning} />} />
           <Route
             path="/chat"
             element={
@@ -72,10 +77,8 @@ export default function App() {
         </Routes>
       </div>
 
-      {/* Global modals */}
       {profileOpen && <Profile onClose={() => dispatch(closeProfile())} />}
       {aboutOpen && <About onClose={() => dispatch(closeAbout())} />}
     </div>
-
   );
 }

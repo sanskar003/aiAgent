@@ -20,6 +20,7 @@ export default function Login() {
       dispatch(setAuth({ token, user }));
       localStorage.setItem("auth", JSON.stringify({ token, user }));
       navigate("/");
+      
     } catch (err) {
       actions.setSubmitting(false);
       const msg = err.message?.toLowerCase() || "";
@@ -41,10 +42,14 @@ export default function Login() {
   }
 
   return (
-    <div className="flex items-center justify-center h-screen bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900 font-amiamie-round p-3 sm:p-3 md:p-0 lg:p-0">
-      <div className="w-[24rem] px-8 py-10 rounded-2xl backdrop-blur-xl bg-white/5 border border-zinc-700 shadow-red-500 shadow-lg/20">
-        <h2 className="text-4xl text-white text-center font-semibold mb-6 font-amiamie">
-          Sign In
+    <div className="flex items-center justify-center min-h-screen relative font-amiamie-round overflow-hidden px-4 sm:px-6">
+      {/* Background gradient shimmer */}
+      <div className="absolute inset-0 bg-gradient-to-br from-red-900 via-zinc-900 to-black animate-gradient-x" />
+
+      {/* Glassmorphic Card */}
+      <div className="relative w-full max-w-sm sm:max-w-md md:max-w-sm px-6 sm:px-8 py-8 sm:py-10 rounded-2xl backdrop-blur-xl bg-white/5 border border-white/10 shadow-lg z-10 mx-auto">
+        <h2 className="text-2xl sm:text-3xl md:text-4xl text-white text-center font-semibold mb-6 font-amiamie-round">
+          Welcome
         </h2>
 
         <Formik
@@ -60,13 +65,14 @@ export default function Login() {
                 </div>
               )}
 
+              {/* Email */}
               <div>
                 <Field
                   id="email"
                   name="email"
                   type="email"
-                  placeholder="Email"
-                  className="w-full px-4 py-2.5 text-lg rounded-xl bg-white/10 text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-red-400 transition"
+                  placeholder="Enter your email"
+                  className="w-full px-4 py-2 sm:py-2.5 text-base sm:text-lg rounded-xl bg-white/10 text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-gradient-to-r focus:from-red-500 focus:to-purple-500 transition"
                 />
                 <ErrorMessage
                   name="email"
@@ -75,13 +81,14 @@ export default function Login() {
                 />
               </div>
 
+              {/* Password */}
               <div>
                 <Field
                   id="password"
                   name="password"
                   type="password"
-                  placeholder="Password"
-                  className="w-full px-4 py-2.5 text-lg rounded-xl bg-white/10 text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-red-400 transition"
+                  placeholder="Enter your password"
+                  className="w-full px-4 py-2 sm:py-2.5 text-base sm:text-lg rounded-xl bg-white/10 text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-gradient-to-r focus:from-red-500 focus:to-purple-500 transition"
                 />
                 <ErrorMessage
                   name="password"
@@ -90,20 +97,39 @@ export default function Login() {
                 />
               </div>
 
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="w-full py-2 mt-4 rounded-xl border border-red-400 hover:bg-red-400 transition-all duration-300 text-white hover:text-black font-semibold shadow-md"
-              >
-                {isSubmitting ? "Signing in..." : "Sign in"}
-              </button>
+              {/* Submit */}
+               <div className="mt-4 h-12 flex items-center justify-center">
+                {isSubmitting ? (
+                  <video
+                    src="/gif/authLoader.webm"
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    disablePictureInPicture
+                    controlsList="nodownload nofullscreen noremoteplayback"
+                    className="w-18 h-18 rounded-full object-contain"
+                  />
+                ) : (
+                  <button
+                    type="submit"
+                    className="w-full h-full rounded-xl bg-gradient-to-r from-red-500 to-zinc-600 text-white font-medium shadow-md cursor-pointer  transition-transform duration-300"
+                  >
+                    Sign in
+                  </button>
+                )}
+              </div>
             </Form>
           )}
         </Formik>
 
-        <p className="text-md text-center text-zinc-400 mt-8">
+        {/* Footer */}
+        <p className="text-sm sm:text-md text-center text-zinc-400 mt-8 font-amiamie">
           Don’t have an account?{" "}
-          <Link to="/register" className="text-red-300 hover:text-blue-500">
+          <Link
+            to="/register"
+            className="text-red-400 hover:text-purple-400 transition"
+          >
             Register
           </Link>
         </p>

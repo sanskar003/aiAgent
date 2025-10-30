@@ -188,7 +188,7 @@ export default function Sidebar() {
       {/* Toggle Icon (always visible) */}
       <button
         onClick={() => setCollapsed((v) => !v)}
-        className="fixed top-8 left-4 z-30 w-7 h-7  rounded-full flex items-center justify-center bg-red-500/60 hover:bg-white/20 border border-white/10 transition-all duration-300"
+        className="fixed top-8 left-5 z-30 w-7 h-7  rounded-full flex items-center justify-center bg-red-500/60 hover:bg-white/20 border border-white/10 transition-all duration-300"
         aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
       >
         <img
