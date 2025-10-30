@@ -63,7 +63,7 @@ export default function App() {
             path="/chat"
             element={
               isAuthenticated ? (
-                hasActiveThread ? <ChatContainer /> : <Login />
+                hasActiveThread ? <ChatContainer /> : <Main />
               ) : (
                 <Navigate to="/login" replace />
               )

@@ -47,7 +47,7 @@ export default function About({ onClose }) {
 
       {/* Title */}
       <h2 className="text-3xl font-bold text-center mb-6 bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
-        ChatMate
+        Synthra
       </h2>
 
       {/* Info Sections */}
@@ -56,7 +56,7 @@ export default function About({ onClose }) {
         <div className="p-4 rounded-xl bg-white/5 border border-zinc-700 hover:border-red-500 transition">
           <h3 className="text-lg font-amiamie font-semibold text-blue-400 mb-2">⚡ Functionality</h3>
           <p className="text-zinc-300 font-light font-amiamie-round leading-tight">
-            ChatMate helps you brainstorm, debug, generate content, and manage conversations with a sleek, modern interface. It’s designed for productivity and creativity, blending smooth animations with powerful AI responses.
+            Synthra helps you brainstorm, debug, generate content, and manage conversations with a sleek, modern interface. It’s designed for productivity and creativity, blending smooth animations with powerful AI responses.
           </p>
         </div>
 

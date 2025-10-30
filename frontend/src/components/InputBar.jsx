@@ -14,10 +14,9 @@ export default function InputBar({ input, setInput, sendMessage }) {
     const trimmed = input.trim();
     if (!trimmed) return;
 
-    // 🧼 Sanitize input to block HTML tags but preserve code-friendly characters
     const clean = DOMPurify.sanitize(trimmed, {
-      ALLOWED_TAGS: [], // block all HTML tags
-      ALLOWED_ATTR: [], // block all attributes
+      ALLOWED_TAGS: [],
+      ALLOWED_ATTR: [],
     });
 
     sendMessage(clean);
@@ -48,18 +47,18 @@ export default function InputBar({ input, setInput, sendMessage }) {
 
   return (
     <div className="fixed bottom-10 left-1/2 transform -translate-x-1/2 w-full px-3 sm:px-5 md:px-6 max-w-3xl z-10">
-      <div className="bg-zinc-600/80 backdrop-blur-md border border-zinc-700 rounded-2xl p-1.5">
+      <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-2 shadow-lg">
         <div
-          className="flex items-center bg-zinc-800 rounded-xl px-2 sm:px-3 py-1.5 shadow-md border border-zinc-700 gap-3"
+          className="flex items-center bg-zinc-900/80 rounded-xl px-3 py-2 gap-3 border border-white/10 shadow-md"
           role="form"
         >
-          {/* Synthra Logo Pulse Block */}
-          <div className="relative flex-shrink-0 w-7 h-7 sm:w-8 sm:h-8 md:w-9 md:h-9">
+          {/* Synthra Pulse Ring */}
+          <div className="relative flex-shrink-0 w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10">
             <div className="absolute inset-0 rounded-full bg-white/20 blur-xl animate-pulse z-0" />
-            <div className="bg-white/10 backdrop-blur-sm rounded-tr-full rounded-bl-full relative z-10 w-full h-full flex items-center justify-center">
-              <div className="rotate-90 bg-red-500/35 backdrop-blur-sm rounded-tr-full rounded-bl-full w-full h-full flex items-center justify-center">
+            <div className="bg-white/10 backdrop-blur-sm rounded-full relative z-10 w-full h-full flex items-center justify-center">
+              <div className="bg-gradient-to-r from-red-500/80 via-white/5 to-purple-500/80 backdrop-blur-sm rounded-full w-full h-full flex items-center justify-center">
                 <img
-                  className="rotate-90 w-4 h-4 sm:w-5 sm:h-5 lg:w-10 lg:h-10"
+                  className="w-5 h-5 sm:w-6 sm:h-6 lg:w-8 lg:h-8 "
                   src="/images/aiInterface.gif"
                   alt="Synthra AI"
                 />
@@ -71,26 +70,26 @@ export default function InputBar({ input, setInput, sendMessage }) {
           <textarea
             ref={textareaRef}
             rows={1}
-            className="flex-grow resize-none bg-transparent font-amiamie-round text-white placeholder-gray-400 focus:outline-none text-sm sm:text-base max-h-60 overflow-y-auto leading-tight"
+            className="flex-grow resize-none bg-transparent font-amiamie-round text-white placeholder-zinc-400 focus:outline-none text-sm sm:text-base max-h-60 overflow-y-auto leading-tight"
             value={input}
             onChange={handleChange}
             onKeyDown={handleKeyDown}
-            placeholder="Know everything"
+            placeholder="Ask Synthra anything..."
           />
 
           {/* Send Button */}
           <button
             onClick={handleSend}
             disabled={!input.trim()}
-            className={`ml-1 rounded-full transition-colors text-white font-medium flex items-center justify-center p-1 ${
+            className={`ml-1 rounded-full transition-all duration-300 flex items-center justify-center p-1 ${
               input.trim()
-                ? "bg-red-500 hover:bg-red-700"
+                ? "bg-red-500"
                 : "bg-zinc-700 cursor-not-allowed"
             }`}
             aria-label="Send message"
           >
             <img
-              className="w-5 h-5 sm:w-6 sm:h-6 hover:scale-90 transition-transform"
+              className="w-5 h-5 sm:w-6 sm:h-6 transition-transform hover:scale-95"
               src="/images/input-sentIcon.png"
               alt="send"
             />

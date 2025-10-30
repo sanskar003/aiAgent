@@ -42,7 +42,7 @@ export default function Sidebar() {
       {/* Sidebar */}
       <aside
         ref={sidebarRef}
-        className="fixed left-2 top-4 h-[95%] rounded-2xl w-64 md:w-80 lg:w-65 bg-zinc-900/90 backdrop-blur-md border-2 border-zinc-700 text-white flex flex-col z-20 overflow-hidden"
+        className="fixed left-3 top-4 h-[95%] rounded-2xl w-64 md:w-80 lg:w-70 bg-black/50 backdrop-blur-md border-2 border-white/20 shadow-lg text-stone-200 flex flex-col z-20 overflow-hidden"
       >
         {/* Expanded content */}
         {!collapsed && (
@@ -69,8 +69,8 @@ export default function Sidebar() {
                       navigate("/chat");
                     });
                 }}
-                className="w-7 h-7 bg-stone-100 rounded-full hover:bg-red-500 cursor-pointer transition-all duration-300"
-                src="/images/Sidebar-addIcon.png"
+                className="w-7 h-7 p-0.5 rounded-full hover:bg-red-500 cursor-pointer transition-all duration-300"
+                src="/images/Sidebar-newAdd.png"
                 alt="Add"
               />
             </div>
@@ -85,8 +85,8 @@ export default function Sidebar() {
                       onClick={() => dispatch(setActiveThread(thread._id))}
                       className={`px-3 py-1.5 rounded-2xl flex justify-between items-center ${
                         activeThreadId === thread._id
-                          ? "bg-red-500/20"
-                          : "hover:bg-zinc-800"
+                          ? "bg-gradient-to-r from-red-500/30 to-purple-500/30 text-white border border-white/10"
+                          : "bg-white/5 text-zinc-300 hover:bg-white/10"
                       }`}
                     >
                       <div className="flex-1">
@@ -176,7 +176,7 @@ export default function Sidebar() {
                   }
                   dispatch(openProfile());
                 }}
-                className="w-8 h-8 border border-red-600 rounded-full p-1 hover:bg-red-500 cursor-pointer transition-all duration-300"
+                className="w-8 h-8 bg-white/15 rounded-full p-1 hover:bg-red-500 cursor-pointer transition-all duration-300"
                 src="/images/Sidebar-userIcon.png"
                 alt="profile"
               />
@@ -188,7 +188,7 @@ export default function Sidebar() {
       {/* Toggle Icon (always visible) */}
       <button
         onClick={() => setCollapsed((v) => !v)}
-        className="fixed top-8 left-4 z-30 w-8 h-8 bg-red-600 rounded-full flex items-center justify-center hover:bg-red-500 transition"
+        className="fixed top-8 left-4 z-30 w-7 h-7  rounded-full flex items-center justify-center bg-red-500/60 hover:bg-white/20 border border-white/10 transition-all duration-300"
         aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
       >
         <img

@@ -10,8 +10,8 @@ function ChatMessage({ text, sender }) {
           <RichMessage text={text} />
         </div>
       ) : (
-        <div className="p-[2px] chat-scroll overflow-y-auto  rounded-2xl bg-stone-800 w-fit max-w-[90%]">
-          <div className=" border border-white/50 px-5 py-3 rounded-2xl shadow-[0_0_12px_rgba(255,255,255,0.2)] prose max-w-none">
+        <div className="p-[2px] chat-scroll overflow-y-auto  rounded-2xl w-fit max-w-[90%]">
+          <div className="  px-5 py-3 rounded-2xl  prose max-w-none">
             <RichMessage text={text} />
           </div>
         </div>

@@ -8,6 +8,7 @@ import {
 import { useEffect, useRef, useState } from "react";
 import ChatWindow from "../components/ChatWindow.jsx";
 import InputBar from "../components/InputBar.jsx";
+import Waves from "../components/Waves.jsx";
 
 export default function ChatContainer() {
   const dispatch = useDispatch();
@@ -110,34 +111,47 @@ export default function ChatContainer() {
 
   return (
     <div className="relative h-screen w-full flex flex-col items-center justify-center">
-     <div className="w-full max-w-3xl h-full flex flex-col items-center px-4 sm:px-6 md:px-8">
-  <div
-    id="chat-container" // ✅ Needed for scroll-to-bottom
-    className="w-full h-[calc(100vh-160px)] mt-5 rounded-xl bg-white/10 backdrop-blur-2xl border border-zinc-700 shadow-md"
-  >
-    {loading ? (
-      <div className="flex items-center justify-center h-full">
-        <img
-          className="w-20 h-20 sm:w-24 sm:h-24 md:w-30 md:h-30"
-          src="/images/loadingMessage.gif"
-          alt="Loading messages ..."
-        />
-      </div>
-    ) : (
-      <ChatWindow
-        messages={messages}
-        isTyping={isTyping}
-        page={page}
-        setPage={setPage}
-        hasMore={hasMore}
-        loadHistoryPage={loadHistoryPage}
-        justLoaded={justLoaded}
+      <Waves
+        lineColor="#b22222"
+        backgroundColor="black"
+        waveSpeedX={0.02}
+        waveSpeedY={0.01}
+        waveAmpX={40}
+        waveAmpY={20}
+        friction={0.9}
+        tension={0.01}
+        maxCursorMove={120}
+        xGap={12}
+        yGap={36}
       />
-    )}
-  </div>
+      <div className="w-full max-w-3xl h-full flex flex-col items-center px-4 sm:px-6 md:px-8">
+        <div
+          id="chat-container" // ✅ Needed for scroll-to-bottom
+          className="w-full h-[calc(100vh-160px)] mt-5 rounded-xl bg-white/10 backdrop-blur-2xl border border-zinc-700 shadow-md"
+        >
+          {loading ? (
+            <div className="flex items-center justify-center h-full">
+              <img
+                className="w-20 h-20 sm:w-24 sm:h-24 md:w-30 md:h-30"
+                src="/images/loadingMessage.gif"
+                alt="Loading messages ..."
+              />
+            </div>
+          ) : (
+            <ChatWindow
+              messages={messages}
+              isTyping={isTyping}
+              page={page}
+              setPage={setPage}
+              hasMore={hasMore}
+              loadHistoryPage={loadHistoryPage}
+              justLoaded={justLoaded}
+            />
+          )}
+        </div>
 
-  <InputBar input={input} setInput={setInput} sendMessage={handleSend} />
-</div>
+        <InputBar input={input} setInput={setInput} sendMessage={handleSend} />
+      </div>
     </div>
   );
 }

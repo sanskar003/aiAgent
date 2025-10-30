@@ -1,5 +1,5 @@
 import { useSelector, useDispatch } from "react-redux";
-import Threads from "./Threads";
+import ColorBends from "./ColorBends";
 import StarBorder from "./StarBorder";
 import { createThread, setActiveThread } from "../slices/threadsSlice";
 import { useNavigate } from "react-router-dom";
@@ -27,9 +27,19 @@ export default function Main() {
 
   return (
     <div className="flex flex-col items-center justify-start h-full text-zinc-400 relative overflow-hidden px-4 sm:px-6 md:px-8">
-      {/* Threads background */}
-      <div className="absolute h-full w-full -z-10">
-        <Threads amplitude={1} distance={0} enableMouseInteraction={false} />
+      <div className="absolute  inset-0 z-10 ">
+        <ColorBends
+          colors={["#b2222"]}
+          rotation={0}
+          speed={0.3}
+          scale={1}
+          frequency={1}
+          warpStrength={1}
+          mouseInfluence={0.3}
+          parallax={0.5}
+          noise={0.1}
+          transparent={true}
+        />
       </div>
 
       <div className="relative flex flex-col justify-center items-center mt-6 sm:mt-10 md:mt-10 lg:mt-0">
