@@ -78,7 +78,7 @@ export default function Main() {
       {/* Welcome block */}
       <div className="text-center max-w-xl w-full px-4 sm:px-6 z-10">
         <h1 className="text-3xl sm:text-4xl font-amiamie-round text-stone-100">
-          {greeting}, {user}
+          {greeting}, {user || "Explorer"}
         </h1>
 
         <p className="mt-6 sm:mt-5 md:mt-5 lg:mt-5 text-lg sm:text-xl text-zinc-300 font-amiamie-round">
