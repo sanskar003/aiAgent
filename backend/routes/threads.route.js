@@ -7,18 +7,14 @@ const router = express.Router();
 
 // 🧠 Dynamic greeting generator
 const getGreetingMessage = (name) => {
-  const hour = new Date().getHours();
-  let timeGreeting;
-
-  if (hour < 12) timeGreeting = "Good morning";
-  else if (hour < 17) timeGreeting = "Good afternoon";
-  else timeGreeting = "Good evening";
-
   const prompts = [
-    `${timeGreeting}, ${name}. What would you like to explore today?`,
-    `Hi ${name}, ready to dive into something new this ${timeGreeting.toLowerCase()}?`,
-    `${timeGreeting}, ${name}. I'm here to help — ask me anything.`,
-    `Welcome back, ${name}. What’s on your mind this ${timeGreeting.toLowerCase()}?`,
+    `Welcome back, ${name}. What’s sparking your curiosity today?`,
+    `Hey ${name}, ready to explore something new together?`,
+    `Hi ${name}, let’s turn your thoughts into threads.`,
+    `Welcome, ${name}. What would you like to create or discover today?`,
+    `Good to see you, ${name}. Let’s pick up where inspiration left off.`,
+    `${name}, your ideas are safe here. What shall we dive into?`,
+    `Hello again, ${name}. Synthra’s listening — what’s on your mind?`,
   ];
 
   return prompts[Math.floor(Math.random() * prompts.length)];

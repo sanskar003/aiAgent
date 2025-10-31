@@ -7,8 +7,18 @@ import { useNavigate } from "react-router-dom";
 export default function Main() {
   const user = useSelector((state) => state.auth?.user?.name);
   const isAuthenticated = useSelector((state) => Boolean(state.auth.token));
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const getTimeGreeting = () => {
+    const hour = new Date().getHours();
+
+    if (hour < 12) return "Good morning";
+    if (hour < 17) return "Good afternoon";
+    return "Good evening";
+  };
+  const greeting = getTimeGreeting();
 
   const handleNewThread = async () => {
     if (!isAuthenticated) {
@@ -68,7 +78,7 @@ export default function Main() {
       {/* Welcome block */}
       <div className="text-center max-w-xl w-full px-4 sm:px-6 z-10">
         <h1 className="text-3xl sm:text-4xl font-amiamie-round text-stone-100">
-          Welcome {user}
+          {greeting}, {user}
         </h1>
 
         <p className="mt-6 sm:mt-5 md:mt-5 lg:mt-5 text-lg sm:text-xl text-zinc-300 font-amiamie-round">

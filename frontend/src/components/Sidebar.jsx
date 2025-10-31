@@ -8,7 +8,7 @@ import {
   setActiveThread,
 } from "../slices/threadsSlice.js";
 import { openProfile } from "../slices/uiSlice.js";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 import gsap from "gsap";
 
 export default function Sidebar() {
@@ -51,13 +51,16 @@ export default function Sidebar() {
         {!collapsed && (
           <>
             {/* Logo + Add icon */}
-            <div className="px-3 py-3 border-b border-zinc-800 flex justify-between items-center">
-              <div className="font-amiamie-light-italic h-10 flex items-center">
-                <img
-                  className="w-17 h-17 mx-10"
+            <div className="px-3 py-3 border-b  border-zinc-800 flex justify-end items-center">
+             <div className="bg-white/10 backdrop-blur-md rounded-3xl px-5 gap-5 flex justify-center items-center">
+               <div className="font-amiamie-light-italic h-10 flex justify-evenly items-center">
+                <Link to={"/"}>
+                 <img
+                  className="w-17 h-17 "
                   src="/images/logo.png"
                   alt="synthra"
                 />
+                </Link>
               </div>
               <img
                 onClick={() => {
@@ -76,6 +79,7 @@ export default function Sidebar() {
                 src="/images/Sidebar-newAdd.png"
                 alt="Add"
               />
+             </div>
             </div>
 
             {/* Threads list */}
