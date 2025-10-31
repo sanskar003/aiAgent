@@ -36,7 +36,7 @@ export default function Main() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-start h-full text-zinc-400 relative overflow-hidden px-4 sm:px-6 md:px-8">
+    <div className="flex flex-col items-center justify-start min-h-screen text-zinc-400 relative overflow-hidden px-4 sm:px-6 md:px-8">
       <div className="absolute  inset-0 z-10 ">
         <ColorBends
           colors={["#b2222"]}
