@@ -22,6 +22,7 @@ export default function ChatContainer() {
   const [hasMore, setHasMore] = useState(true);
   const [justLoaded, setJustLoaded] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [initialScroll, setInitialScroll] = useState(false); // 👈 NEW
 
   const messagesRef = useRef(messages);
 
@@ -35,7 +36,6 @@ export default function ChatContainer() {
     try {
       const history = await fetchHistory(token, activeThreadId, pageNum, 30);
 
-      // Defensive check: ensure history is an array
       if (!Array.isArray(history)) {
         console.warn("Invalid history response or unauthorized thread access");
         setHasMore(false);
@@ -46,7 +46,7 @@ export default function ChatContainer() {
       dispatch(prependMessages(history));
     } catch (err) {
       console.error("Failed to load history page:", err);
-      setHasMore(false); // Prevent further attempts if fetch fails
+      setHasMore(false);
     }
   }
 
@@ -58,21 +58,12 @@ export default function ChatContainer() {
           const latest = await fetchHistory(token, activeThreadId, 1, 20);
           dispatch(setMessages(latest));
           setPage(2);
+          setInitialScroll(true); // 👈 trigger scroll in ChatWindow
         } catch (err) {
           console.error("Failed to fetch messages:", err);
         } finally {
           setLoading(false);
         }
-
-        requestAnimationFrame(() => {
-          const container = document.querySelector("#chat-container");
-          if (container) {
-            container.scrollTo({
-              top: container.scrollHeight,
-              behavior: "smooth",
-            });
-          }
-        });
       })();
     }
   }, [token, activeThreadId, dispatch]);
@@ -110,7 +101,7 @@ export default function ChatContainer() {
   }
 
   return (
-    <div className="relative h-screen w-full flex flex-col items-center justify-center">
+    <div className="relative h-screen w-full flex flex-col items-center justify-center overflow-hidden">
       <Waves
         lineColor="#b22222"
         backgroundColor="black"
@@ -125,10 +116,7 @@ export default function ChatContainer() {
         yGap={36}
       />
       <div className="w-full max-w-3xl h-full flex flex-col items-center px-4 sm:px-6 md:px-8">
-        <div
-          id="chat-container" // ✅ Needed for scroll-to-bottom
-          className="w-full h-[calc(100vh-160px)] mt-5 rounded-xl bg-white/10 backdrop-blur-2xl border border-zinc-700 shadow-md"
-        >
+        <div className="w-full h-[calc(100vh-160px)] mt-5 rounded-xl bg-white/10 backdrop-blur-2xl border border-zinc-700 shadow-md">
           {loading ? (
             <div className="flex items-center justify-center h-full">
               <img
@@ -146,6 +134,7 @@ export default function ChatContainer() {
               hasMore={hasMore}
               loadHistoryPage={loadHistoryPage}
               justLoaded={justLoaded}
+              initialScroll={initialScroll} // 👈 pass to ChatWindow
             />
           )}
         </div>

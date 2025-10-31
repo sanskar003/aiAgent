@@ -10,8 +10,10 @@ export default function ChatWindow({
   hasMore,
   loadHistoryPage,
   justLoaded,
+  initialScroll = false, // ✅ NEW PROP
 }) {
   const parentRef = useRef(null);
+  const prevLastId = useRef(null);
 
   const rowVirtualizer = useVirtualizer({
     count: messages.length,
@@ -20,6 +22,36 @@ export default function ChatWindow({
     overscan: 5,
   });
 
+  // ✅ Scroll to bottom on initial load
+  useEffect(() => {
+    if (initialScroll && parentRef.current) {
+      setTimeout(() => {
+        parentRef.current.scrollTo({
+          top: parentRef.current.scrollHeight,
+          behavior: "smooth",
+        });
+      }, 100); // delay to allow rendering
+    }
+  }, [initialScroll]);
+
+  // ✅ Scroll to bottom on new message
+  useEffect(() => {
+    if (messages.length === 0 || !parentRef.current) return;
+
+    const lastMsg = messages[messages.length - 1];
+    const lastId = lastMsg?._id || lastMsg?.text;
+
+    if (lastId !== prevLastId.current) {
+      parentRef.current.scrollTo({
+        top: parentRef.current.scrollHeight,
+        behavior: "smooth",
+      });
+    }
+
+    prevLastId.current = lastId;
+  }, [messages]);
+
+  // ✅ Load older messages when near top
   useEffect(() => {
     const container = parentRef.current;
     const handleScroll = () => {
@@ -32,7 +64,7 @@ export default function ChatWindow({
           requestAnimationFrame(() => {
             const newScrollHeight = container.scrollHeight;
             const scrollDiff = newScrollHeight - previousScrollHeight;
-            container.scrollTop += scrollDiff; // ✅ preserve position
+            container.scrollTop += scrollDiff;
           });
         });
       }
@@ -41,24 +73,6 @@ export default function ChatWindow({
     container.addEventListener("scroll", handleScroll);
     return () => container.removeEventListener("scroll", handleScroll);
   }, [page, hasMore]);
-
-const prevLastId = useRef(null);
-
-useEffect(() => {
-  if (messages.length === 0 || !parentRef.current) return;
-
-  const lastMsg = messages[messages.length - 1];
-  const lastId = lastMsg?._id || lastMsg?.text;
-
-  if (lastId !== prevLastId.current) {
-    parentRef.current.scrollTo({
-      top: parentRef.current.scrollHeight,
-      behavior: "smooth",
-    });
-  }
-
-  prevLastId.current = lastId;
-}, [messages]);
 
   return (
     <div

@@ -8,7 +8,7 @@ import {
   setActiveThread,
 } from "../slices/threadsSlice.js";
 import { openProfile } from "../slices/uiSlice.js";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import gsap from "gsap";
 
 export default function Sidebar() {
@@ -20,8 +20,11 @@ export default function Sidebar() {
   const sidebarRef = useRef();
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const loaction = useLocation();
 
-  const { items: threads, activeThreadId } = useSelector((state) => state.threads);
+  const { items: threads, activeThreadId } = useSelector(
+    (state) => state.threads
+  );
   const isAuthenticated = useSelector((state) => Boolean(state.auth.token));
 
   useEffect(() => {
@@ -82,7 +85,12 @@ export default function Sidebar() {
                   threads.map((thread) => (
                     <li
                       key={thread._id}
-                      onClick={() => dispatch(setActiveThread(thread._id))}
+                      onClick={() => {
+                        dispatch(setActiveThread(thread._id));
+                        if (location.pathname !== "/chat") {
+                          navigate("/chat");
+                        }
+                      }}
                       className={`px-3 py-1.5 rounded-2xl flex justify-between items-center ${
                         activeThreadId === thread._id
                           ? "bg-gradient-to-r from-red-500/30 to-purple-500/30 text-white border border-white/10"
@@ -95,12 +103,22 @@ export default function Sidebar() {
                             value={tempTitle}
                             onChange={(e) => setTempTitle(e.target.value)}
                             onBlur={() => {
-                              dispatch(renameThread({ id: thread._id, title: tempTitle }));
+                              dispatch(
+                                renameThread({
+                                  id: thread._id,
+                                  title: tempTitle,
+                                })
+                              );
                               setEditingId(null);
                             }}
                             onKeyDown={(e) => {
                               if (e.key === "Enter") {
-                                dispatch(renameThread({ id: thread._id, title: tempTitle }));
+                                dispatch(
+                                  renameThread({
+                                    id: thread._id,
+                                    title: tempTitle,
+                                  })
+                                );
                                 setEditingId(null);
                               }
                             }}
@@ -125,7 +143,9 @@ export default function Sidebar() {
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
-                            setMenuOpenId(menuOpenId === thread._id ? null : thread._id);
+                            setMenuOpenId(
+                              menuOpenId === thread._id ? null : thread._id
+                            );
                           }}
                         >
                           <img

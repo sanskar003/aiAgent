@@ -22,6 +22,7 @@ export default function App() {
 
   const [rehydrated, setRehydrated] = useState(false);
   const [transitioning, setTransitioning] = useState(false);
+  const [showIntro, setShowIntro] = useState(true)
 
   // Hide sidebar on login/register
   const hideSidebar = ["/login", "/register"].includes(location.pathname);
@@ -46,13 +47,19 @@ export default function App() {
     }
 
     setRehydrated(true);
+
+    const introTimer = setTimeout(() => {
+      setShowIntro(false)
+    }, 3000)
+
+    return () => clearTimeout(introTimer);
   }, [dispatch]);
 
   const isAuthenticated = Boolean(token);
   const hasActiveThread = Boolean(activeThreadId);
 
   // Show loader if not rehydrated or in transition
-  if (!rehydrated || transitioning) {
+  if (!rehydrated || showIntro) {
     return <LandingLoader />;
   }
 
